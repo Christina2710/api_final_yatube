@@ -47,7 +47,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     # Получаем только комментарии, относящиеся к конкретному посту
     def get_queryset(self):
         post = self.get_post()
-        # return Comment.objects.filter(post=post)
         return post.comments.all()
 
     def perform_create(self, serializer):
