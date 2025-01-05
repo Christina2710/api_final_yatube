@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'posts.apps.PostsConfig',
     'rest_framework',
     'rest_framework_simplejwt',
-    'django_filters',
+    # На платформе возникает ошибка при использовании данной библиотеки
+    # 'django_filters',
     'djoser',
 ]
 

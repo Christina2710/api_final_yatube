@@ -1,4 +1,5 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions
+# from rest_framework import filters
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
@@ -82,14 +83,22 @@ class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
     permission_classes = (permissions.IsAuthenticated,)
     # Подключаем фильтр для поиска по полям
-    filter_backends = (filters.SearchFilter,)
-    # Ищем по имени пользователя, на которого подписываются
-    search_fields = ('following__username',)
+    # filter_backends = (filters.SearchFilter,)
+    # Фильтруем по имени пользователя, на которого подписываются
+    # search_fields = ('following__username',)
 
     def get_queryset(self):
         user = self.request.user
         # Возвращаем подписки текущего пользователя
-        return user.follower.all()
+        queryset = user.follower.all()
+        # Получаем параметр поиска из GET-запроса
+        search_query = self.request.query_params.get('search', None)
+        if search_query:
+            # Фильтруем по имени пользователя, на которого подписываются
+            queryset = queryset.filter(
+                following__username__icontains=search_query
+            )
+        return queryset
 
     def perform_create(self, serializer):
         # Сохраняем данные, передавая текущего пользователя как автора подписки
